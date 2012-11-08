@@ -2,6 +2,8 @@ package jdependFast.framework;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * The <code>JDepend</code> class analyzes directories of Java class files 
@@ -108,13 +110,19 @@ public class JDepend_T {
     private ClassFileParser_T parser;
     private JavaClassBuilder_T builder;
     private Collection components;
+    private ExecutorService executor;
 
-    public JDepend_T() {
+    public ExecutorService getExecutor() {
+		return executor;
+	}
+
+	public JDepend_T() {
         this(new PackageFilter_T());
     }
 
     public JDepend_T(PackageFilter_T filter) {
-
+    	
+    	executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
         setFilter(filter);
 
         this.packages = new HashMap();
