@@ -2,6 +2,7 @@ package jdependFast.framework;
 
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.Callable;
 import java.util.jar.*;
 import java.util.zip.*;
 
@@ -13,7 +14,7 @@ import java.util.zip.*;
  * @author Clarkware Consulting, Inc.
  */
 
-public class JavaClassBuilder_T {
+public class JavaClassBuilder_T implements Callable<Collection> {
 
     private AbstractParser_T parser;
     private FileManager_T fileManager;
@@ -61,7 +62,9 @@ public class JavaClassBuilder_T {
             try {
 
                 classes.addAll(buildClasses(nextFile));
-
+                // building here
+                // parallel
+                
             } catch (IOException ioe) {
                 System.err.println("\n" + ioe.getMessage());
             }
@@ -134,4 +137,10 @@ public class JavaClassBuilder_T {
 
         return javaClasses;
     }
+
+	@Override
+	public Collection call() throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
