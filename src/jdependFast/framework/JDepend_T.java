@@ -5,6 +5,7 @@ import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+
 /**
  * The <code>JDepend</code> class analyzes directories of Java class files 
  * and generates the following metrics for each Java package.
@@ -143,16 +144,38 @@ public class JDepend_T {
      * @return Collection of analyzed packages.
      */
     public Collection analyze() {
-    	ExecutorService es = JDepend_T.getExecutor();
+    	
         Collection<Collection<JavaClass_T>> classes = builder.build();
         
+        ExecutorService es = JDepend_T.getExecutor();
         for (Iterator i = classes.iterator(); i.hasNext();) {
-            es.execute((JavaClass_T)i.next());
+        	
+            //es.execute((JavaClass_T)i.next());
+        	analyzeClass((JavaClass_T)i.next());
+        	
         }
 
         return getPackages();
     }
 
+    private void analyzeClass(JavaClass_T javaClass) {
+
+        String packageName = javaClass.getPackageName();
+
+        if (!getFilter().accept(packageName)) {
+            return;
+        }
+
+        JavaPackage_T clazzPackage = addPackage(packageName);
+        clazzPackage.addClass(javaClass);
+
+        Collection imports = javaClass.getImportedPackages();
+        for (Iterator i = imports.iterator(); i.hasNext();) {
+            JavaPackage_T importedPackage = (JavaPackage_T)i.next();
+            importedPackage = addPackage(importedPackage.getName());
+            clazzPackage.dependsUpon(importedPackage);
+        }
+    }
     /**
      * Adds the specified directory name to the collection of directories to be
      * analyzed.

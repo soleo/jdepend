@@ -67,11 +67,7 @@ public class JavaClassBuilder_T implements Callable<Collection> {
             JavaClassBuilder_T jcb = new JavaClassBuilder_T();	
             jcb.setFile(nextFile);
             callables.add(jcb);
-            	
-                //classes.addAll(buildClasses(nextFile));
-                // building here
-                // parallel
-                
+
         }
 
 		List<Future<Collection>> future = null;
@@ -94,10 +90,10 @@ public class JavaClassBuilder_T implements Callable<Collection> {
 				e.printStackTrace();
 			}
 		}
-		
+		//System.out.println(classes);
         return classes;
     }
-
+    
     /**
      * Builds the <code>JavaClass</code> instances from the 
      * specified file.

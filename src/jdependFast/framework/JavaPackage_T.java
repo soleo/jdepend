@@ -2,6 +2,8 @@ package jdependFast.framework;
 
 import java.util.*;
 
+
+
 /**
  * The <code>JavaPackage</code> class represents a Java package.
  * 
