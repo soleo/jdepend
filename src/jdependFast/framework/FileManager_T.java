@@ -36,12 +36,14 @@ public class FileManager_T {
     public void addDirectory(String name) throws IOException {
 
         File directory = new File(name);
-
-        if (directory.isDirectory() || acceptJarFile(directory)) {
-            directories.add(directory);
-        } else {
-            throw new IOException("Invalid directory or JAR file: " + name);
-        }
+        // lock directories before add new directory
+        //synchronized(directories){
+	        if (directory.isDirectory() || acceptJarFile(directory)) {
+	            directories.add(directory);
+	        } else {
+	            throw new IOException("Invalid directory or JAR file: " + name);
+	        }
+        //}
     }
 
     public boolean acceptFile(File file) {
@@ -74,7 +76,7 @@ public class FileManager_T {
         return isJar(file) || isZip(file) || isWar(file);
     }
 
-    public Collection extractFiles() {
+    public  Collection extractFiles() {
 
         Collection files = new TreeSet();
 
