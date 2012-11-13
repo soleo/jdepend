@@ -491,7 +491,7 @@ public class JDepend {
 
                     try {
                         setWriter(new PrintWriter(new OutputStreamWriter(
-                                new FileOutputStream(args[++i]), "UTF8")));
+                                new FileOutputStream(args[++i]+"-seq.txt"), "UTF8")));
                     } catch (IOException ioe) {
                         usage(ioe.getMessage());
                     }
@@ -523,7 +523,9 @@ public class JDepend {
 
     public static void main(String args[]) {
         new JDepend().instanceMain(args);
-        new JDepend().instanceMain_T(args);
+        new JDepend(2).instanceMain_T(args);
+        if (!compareFiles("out-par.txt", "out-seq.txt"))
+        	System.out.println("NOT EQUAL");
     }
     
     public JDepend(int x) {
@@ -563,7 +565,7 @@ public class JDepend {
 
                     try {
                         setWriter(new PrintWriter(new OutputStreamWriter(
-                                new FileOutputStream(args[++i]), "UTF8")));
+                                new FileOutputStream(args[++i]+"-par.txt"), "UTF8")));
                     } catch (IOException ioe) {
                         usage(ioe.getMessage());
                     }
@@ -621,5 +623,28 @@ public class JDepend {
     
     private jdependFast.framework.JDepend_T analyzer_T;
 
-
+    boolean compareFiles(String f1, String f2) throws IOException
+    {
+        FileInputStream fstream1 = new FileInputStream(f1);  
+        FileInputStream fstream2 = new FileInputStream(f2);  
+          
+        DataInputStream in1= new DataInputStream(fstream1);  
+        DataInputStream in2= new DataInputStream(fstream2);  
+          
+        BufferedReader br1 = new BufferedReader(new InputStreamReader(in1));  
+        BufferedReader br2 = new BufferedReader(new InputStreamReader(in2));  
+          
+        String strLine1, strLine2 = null;  
+          
+          
+        while((strLine1 = br1.readLine()) != null && (strLine2 = br2.readLine()) != null){  
+            if(!strLine1.equals(strLine2)){  
+               return false;  
+                  
+            }  
+        }
+        if ((strLine1 == null && strLine2 != null) || (strLine2 == null && strLine1 != null))
+        	return false;
+     return true;     
+   }  
 }

@@ -10,8 +10,10 @@ import java.util.*;
  * @author Clarkware Consulting, Inc.
  */
 
-public class JavaClass_T {
-
+public class JavaClass_T implements Runnable {
+	
+	private JDepend_T jdt;
+	
     private String className;
     private String packageName;
     private boolean isAbstract;
@@ -92,4 +94,29 @@ public class JavaClass_T {
             return c1.getName().compareTo(c2.getName());
         }
     }
+
+	public void run() {
+		
+        if (!jdt.getFilter().accept(packageName)) {
+            return;
+        }
+        
+        JavaPackage_T clazzPackage = jdt.addPackage(packageName);
+        clazzPackage.addClass(this);
+
+        Collection imports = this.imports.values();
+        for (Iterator i = imports.iterator(); i.hasNext();) {
+            JavaPackage_T importedPackage = (JavaPackage_T)i.next();
+            importedPackage = jdt.addPackage(importedPackage.getName());
+            clazzPackage.dependsUpon(importedPackage);
+        }
+	}
+
+	public void setJdt(JDepend_T jdt) {
+		this.jdt = jdt;
+	}
+
+	public JDepend_T getJdt() {
+		return jdt;
+	}
 }
