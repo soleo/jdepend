@@ -57,7 +57,7 @@ public class JavaClassBuilder_T implements Callable<Collection> {
     public Collection<Collection<JavaClass_T>> build() {
 
         Collection classes = new ArrayList();
-        Set<Callable<Collection>> callables = new TreeSet<Callable<Collection>>();
+        Set<Callable<Collection>> callables = new HashSet<Callable<Collection>>();
 
 		// put the work for threads
         
