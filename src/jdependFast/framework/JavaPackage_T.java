@@ -120,7 +120,9 @@ public class JavaPackage_T {
     }
 
     public void addClass(JavaClass_T clazz) {
+    	synchronized(classes){
         classes.add(clazz);
+    	}
     }
 
     public Collection getClasses() {
@@ -175,9 +177,11 @@ public class JavaPackage_T {
      */
     public void addAfferent(JavaPackage_T jPackage) {
         if (!jPackage.getName().equals(getName())) {
-            if (!afferents.contains(jPackage)) {
-                afferents.add(jPackage);
-            }
+        	synchronized(afferents){
+	            if (!afferents.contains(jPackage)) {
+	                afferents.add(jPackage);
+	            }
+        	}
         }
     }
 
@@ -191,9 +195,11 @@ public class JavaPackage_T {
 
     public void addEfferent(JavaPackage_T jPackage) {
         if (!jPackage.getName().equals(getName())) {
-            if (!efferents.contains(jPackage)) {
-                efferents.add(jPackage);
-            }
+        	synchronized(afferents){
+	            if (!efferents.contains(jPackage)) {
+	                efferents.add(jPackage);
+	            }
+        	}
         }
     }
 

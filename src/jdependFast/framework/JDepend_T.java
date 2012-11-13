@@ -122,8 +122,7 @@ public class JDepend_T {
 
     public JDepend_T(PackageFilter_T filter) {
     	
-    	executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-        //System.out.println("processors: "+Runtime.getRuntime().availableProcessors());
+    	executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors()*2);
     	setFilter(filter);
 
         this.packages = new HashMap();
@@ -144,11 +143,11 @@ public class JDepend_T {
      * @return Collection of analyzed packages.
      */
     public Collection analyze() {
-
-        Collection classes = builder.build();
+    	ExecutorService es = JDepend_T.getExecutor();
+        Collection<Collection<JavaClass_T>> classes = builder.build();
         
         for (Iterator i = classes.iterator(); i.hasNext();) {
-            analyzeClass((JavaClass_T)i.next());
+            es.execute((JavaClass_T)i.next());
         }
 
         return getPackages();
@@ -205,7 +204,11 @@ public class JDepend_T {
      * @return Package, or <code>null</code> if the package was not analyzed.
      */
     public JavaPackage_T getPackage(String name) {
-        return (JavaPackage_T)packages.get(name);
+    	JavaPackage_T t = null;
+    	synchronized(packages){
+    		t = (JavaPackage_T)packages.get(name);
+    	}
+        return t;
     }
 
     /**
@@ -271,13 +274,27 @@ public class JDepend_T {
      */
     public JavaPackage_T addPackage(String name) {
         name = toComponent(name);
-        JavaPackage_T pkg = (JavaPackage_T)packages.get(name);
+        JavaPackage_T pkg = getPackage(name);
         if (pkg == null) {
             pkg = new JavaPackage_T(name);
             addPackage(pkg);
         }
 
         return pkg;
+    }
+    
+    /**
+     * Adds the specified Java package to the collection of 
+     * analyzed packages.
+     * 
+     * @param pkg Java package.
+     */
+   public void addPackage(JavaPackage_T pkg) {
+	   synchronized(packages){
+        if (!packages.containsValue(pkg)) {
+            packages.put(pkg.getName(), pkg);
+        }
+	   }
     }
 
     private String toComponent(String packageName) {
@@ -305,17 +322,6 @@ public class JDepend_T {
         }
     }
 
-    /**
-     * Adds the specified Java package to the collection of 
-     * analyzed packages.
-     * 
-     * @param pkg Java package.
-     */
-    public void addPackage(JavaPackage_T pkg) {
-        if (!packages.containsValue(pkg)) {
-            packages.put(pkg.getName(), pkg);
-        }
-    }
 
     public PackageFilter_T getFilter() {
         if (filter == null) {
@@ -332,22 +338,5 @@ public class JDepend_T {
         this.filter = filter;
     }
 
-    private void analyzeClass(JavaClass_T clazz) {
-
-        String packageName = clazz.getPackageName();
-
-        if (!getFilter().accept(packageName)) {
-            return;
-        }
-
-        JavaPackage_T clazzPackage = addPackage(packageName);
-        clazzPackage.addClass(clazz);
-
-        Collection imports = clazz.getImportedPackages();
-        for (Iterator i = imports.iterator(); i.hasNext();) {
-            JavaPackage_T importedPackage = (JavaPackage_T)i.next();
-            importedPackage = addPackage(importedPackage.getName());
-            clazzPackage.dependsUpon(importedPackage);
-        }
-    }
 }
+;
