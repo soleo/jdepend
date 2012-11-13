@@ -110,9 +110,9 @@ public class JDepend_T {
     private ClassFileParser_T parser;
     private JavaClassBuilder_T builder;
     private Collection components;
-    private ExecutorService executor;
+    private static ExecutorService executor = null;
 
-    public ExecutorService getExecutor() {
+    public static ExecutorService getExecutor() {
 		return executor;
 	}
 
@@ -122,7 +122,7 @@ public class JDepend_T {
 
     public JDepend_T(PackageFilter_T filter) {
     	
-    	this.executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+    	executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
         //System.out.println("processors: "+Runtime.getRuntime().availableProcessors());
     	setFilter(filter);
 

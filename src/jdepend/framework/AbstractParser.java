@@ -49,7 +49,7 @@ public abstract class AbstractParser {
             ((ParserListener) i.next()).onParsedJavaClass(jClass);
         }
     }
-
+   
     protected PackageFilter getFilter() {
         if (filter == null) {
             setFilter(new PackageFilter());

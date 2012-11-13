@@ -558,7 +558,7 @@ public class JDepend {
                 }
             } else {
                 try {
-                    addDirectory(args[i]);
+                    addDirectory_T(args[i]);
                     directoryCount++;
                 } catch (IOException ioe) {
                     usage("Directory does not exist: " + args[i]);
@@ -572,6 +572,33 @@ public class JDepend {
 
         analyze();
     }
+    
+    public void addDirectory_T(String name) throws IOException {
+        analyzer_T.addDirectory(name);
+    }
+    
+    public void analyze_T() {
+
+        printHeader();
+
+        Collection packages = analyzer_T.analyze();
+
+        ArrayList packageList = new ArrayList(packages);
+
+        Collections.sort(packageList, new PackageComparator(PackageComparator
+                .byName()));
+
+        printPackages(packageList);
+
+        printCycles(packageList);
+
+        printSummary(packageList);
+
+        printFooter();
+
+        getWriter().flush();
+    }
+    
     private jdependFast.framework.JDepend_T analyzer_T;
 
 
