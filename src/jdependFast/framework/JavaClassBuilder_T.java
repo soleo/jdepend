@@ -50,7 +50,7 @@ public class JavaClassBuilder_T {
      * 
      * @return Collection of <code>JavaClass</code> instances.
      */
-    public Collection build() {
+    public Collection<Collection<JavaClass_T>> build() {
 
         Collection classes = new ArrayList();
 
@@ -77,7 +77,7 @@ public class JavaClassBuilder_T {
      * @param file Class or Jar file.
      * @return Collection of <code>JavaClass</code> instances.
      */
-    public Collection buildClasses(File file) throws IOException {
+    public Collection<JavaClass_T> buildClasses(File file) throws IOException {
 
         if (fileManager.acceptClassFile(file)) {
             InputStream is = null;

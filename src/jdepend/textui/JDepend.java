@@ -525,6 +525,26 @@ public class JDepend {
         new JDepend().instanceMain(args);
         new JDepend().instanceMain_T(args);
     }
+    
+    public JDepend(int x) {
+        this(new PrintWriter(System.out), 2);
+    }
+
+    /**
+     * Constructs a <code>JDepend</code> instance with the specified writer.
+     * 
+     * @param writer Writer.
+     */
+    public JDepend(PrintWriter writer, int x) {
+        analyzer_T = new jdependFast.framework.JDepend_T();
+
+        formatter = NumberFormat.getInstance();
+        formatter.setMaximumFractionDigits(2);
+
+        setWriter(writer);
+    }
+    
+    
     protected void instanceMain_T(String[] args) {
 
         if (args.length < 1) {
@@ -565,12 +585,12 @@ public class JDepend {
                 }
             }
         }
-
+        
         if (directoryCount == 0) {
             usage("Must specify at least one directory.");
         }
 
-        analyze();
+        analyze_T();
     }
     
     public void addDirectory_T(String name) throws IOException {

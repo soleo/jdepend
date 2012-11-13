@@ -123,7 +123,6 @@ public class JDepend_T {
     public JDepend_T(PackageFilter_T filter) {
     	
     	executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-        //System.out.println("processors: "+Runtime.getRuntime().availableProcessors());
     	setFilter(filter);
 
         this.packages = new HashMap();
@@ -136,6 +135,24 @@ public class JDepend_T {
         addPackages(config.getConfiguredPackages());
         analyzeInnerClasses(config.getAnalyzeInnerClasses());
     }
+    private void analyzeClass(JavaClass_T clazz) {
+
+        String packageName = clazz.getPackageName();
+
+        if (!getFilter().accept(packageName)) {
+            return;
+        }
+
+        JavaPackage_T clazzPackage = addPackage(packageName);
+        clazzPackage.addClass(clazz);
+
+        Collection imports = clazz.getImportedPackages();
+        for (Iterator i = imports.iterator(); i.hasNext();) {
+            JavaPackage_T importedPackage = (JavaPackage_T)i.next();
+            importedPackage = addPackage(importedPackage.getName());
+            clazzPackage.dependsUpon(importedPackage);
+        }
+    }
     
     /**
      * Analyzes the registered directories and returns the collection of
@@ -145,7 +162,7 @@ public class JDepend_T {
      */
     public Collection analyze() {
 
-        Collection classes = builder.build();
+        Collection<Collection<JavaClass_T>> classes = builder.build();
         
         for (Iterator i = classes.iterator(); i.hasNext();) {
             analyzeClass((JavaClass_T)i.next());
@@ -332,22 +349,4 @@ public class JDepend_T {
         this.filter = filter;
     }
 
-    private void analyzeClass(JavaClass_T clazz) {
-
-        String packageName = clazz.getPackageName();
-
-        if (!getFilter().accept(packageName)) {
-            return;
-        }
-
-        JavaPackage_T clazzPackage = addPackage(packageName);
-        clazzPackage.addClass(clazz);
-
-        Collection imports = clazz.getImportedPackages();
-        for (Iterator i = imports.iterator(); i.hasNext();) {
-            JavaPackage_T importedPackage = (JavaPackage_T)i.next();
-            importedPackage = addPackage(importedPackage.getName());
-            clazzPackage.dependsUpon(importedPackage);
-        }
-    }
 }
