@@ -81,7 +81,7 @@ public class JavaClassBuilder_T implements Callable<Collection<JavaClass_T>> {
 		// Get the result from the threads
 		for(Future<Collection<JavaClass_T>> temp : future ){
 			try {
-				classes.add(temp.get());
+				classes.addAll(temp.get());
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
