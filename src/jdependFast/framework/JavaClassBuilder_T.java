@@ -16,7 +16,7 @@ import java.util.zip.*;
  * @author Clarkware Consulting, Inc.
  */
 
-public class JavaClassBuilder_T implements Callable<Collection> {
+public class JavaClassBuilder_T implements Callable<Collection<JavaClass_T>> {
 
     private AbstractParser_T parser;
     private FileManager_T fileManager;
@@ -57,7 +57,7 @@ public class JavaClassBuilder_T implements Callable<Collection> {
     public Collection<Collection<JavaClass_T>> build() {
 
         Collection classes = new ArrayList();
-        Set<Callable<Collection>> callables = new HashSet<Callable<Collection>>();
+        Set<Callable<Collection<JavaClass_T>>> callables = new HashSet<Callable<Collection<JavaClass_T>>>();
 
 		// put the work for threads
         
@@ -70,7 +70,7 @@ public class JavaClassBuilder_T implements Callable<Collection> {
 
         }
 
-		List<Future<Collection>> future = null;
+		List<Future<Collection<JavaClass_T>>> future = null;
 		
 		try {
 			future = JDepend_T.getExecutor().invokeAll(callables);
@@ -79,7 +79,7 @@ public class JavaClassBuilder_T implements Callable<Collection> {
 			e2.printStackTrace();
 		}
 		// Get the result from the threads
-		for(Future<Collection> temp : future ){
+		for(Future<Collection<JavaClass_T>> temp : future ){
 			try {
 				classes.add(temp.get());
 			} catch (InterruptedException e) {
