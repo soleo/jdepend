@@ -123,7 +123,8 @@ public class JDepend_T {
     public JDepend_T(PackageFilter_T filter) {
     	
     	executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-        setFilter(filter);
+        System.out.println("processors: "+Runtime.getRuntime().availableProcessors());
+    	setFilter(filter);
 
         this.packages = new HashMap();
         this.fileManager = new FileManager_T();
