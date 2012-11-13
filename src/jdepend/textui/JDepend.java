@@ -523,5 +523,56 @@ public class JDepend {
 
     public static void main(String args[]) {
         new JDepend().instanceMain(args);
+        new JDepend().instanceMain_T(args);
     }
+    protected void instanceMain_T(String[] args) {
+
+        if (args.length < 1) {
+            usage("Must specify at least one directory.");
+        }
+
+        int directoryCount = 0;
+
+        for (int i = 0; i < args.length; i++) {
+            if (args[i].startsWith("-")) {
+                if (args[i].equalsIgnoreCase("-file")) {
+
+                    if (args.length <= i + 1) {
+                        usage("Output file name not specified.");
+                    }
+
+                    try {
+                        setWriter(new PrintWriter(new OutputStreamWriter(
+                                new FileOutputStream(args[++i]), "UTF8")));
+                    } catch (IOException ioe) {
+                        usage(ioe.getMessage());
+                    }
+                    
+                } else if (args[i].equalsIgnoreCase("-components")) {
+                    if (args.length <= i + 1) {
+                        usage("Components not specified.");
+                    }
+                    setComponents(args[++i]);
+                } else {
+                    usage("Invalid argument: " + args[i]);
+                }
+            } else {
+                try {
+                    addDirectory(args[i]);
+                    directoryCount++;
+                } catch (IOException ioe) {
+                    usage("Directory does not exist: " + args[i]);
+                }
+            }
+        }
+
+        if (directoryCount == 0) {
+            usage("Must specify at least one directory.");
+        }
+
+        analyze();
+    }
+    private jdependFast.framework.JDepend_T analyzer_T;
+
+
 }
