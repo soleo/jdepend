@@ -2,6 +2,7 @@ package jdependFast.framework;
 
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.Callable;
 
 /**
  * The <code>FileManager</code> class is responsible for extracting 
@@ -12,11 +13,11 @@ import java.util.*;
  * @author Clarkware Consulting, Inc.
  */
 
-public class FileManager_T {
+public class FileManager_T{
 
     private ArrayList directories;
     private boolean acceptInnerClasses;
-
+    private Consumer consumer = new ConsumerImpl(10);
 
     public FileManager_T() {
         directories = new ArrayList();
@@ -36,14 +37,14 @@ public class FileManager_T {
     public void addDirectory(String name) throws IOException {
 
         File directory = new File(name);
-        // lock directories before add new directory
-        //synchronized(directories){
+        
+        
 	        if (directory.isDirectory() || acceptJarFile(directory)) {
 	            directories.add(directory);
 	        } else {
 	            throw new IOException("Invalid directory or JAR file: " + name);
 	        }
-        //}
+        
     }
 
     public boolean acceptFile(File file) {
@@ -78,39 +79,94 @@ public class FileManager_T {
 
     public  Collection extractFiles() {
 
-        Collection files = new TreeSet();
-
+        Collection<File> files = new TreeSet();
+       
         for (Iterator i = directories.iterator(); i.hasNext();) {
             File directory = (File)i.next();
+            //ArrayList<File> dir;
             collectFiles(directory, files);
         }
-
+        //System.out.println(files.toArray().toString());
+        for (File f : files) {
+            System.out.println(f.getName());
+            //System.out.println(element.getIvar2());
+        }
         return files;
     }
 
-    private void collectFiles(File directory, Collection files) {
+    class CollectJob implements Item{
+    	File dir;
+    	Collection files;
+    	CollectJob(File dir, Collection files){
+    		this.dir = dir;
+    		this.files = files;
+    	}
+		@Override
+		public void process() {
+			// TODO Auto-generated method stub
+			if(dir.isFile()){
+				addFile(dir, files);
+				System.out.println(Thread.currentThread().getName() + " consuming : "+dir);
+			}else{
+				String[] directoryFiles = dir.list();
+				for (int i = 0; i < directoryFiles.length; i++) {
 
+	                File file = new File(dir, directoryFiles[i]);
+	                if (acceptFile(file)) {
+	                    addFile(file, files);
+	                } else if (file.isDirectory()) {
+	                    //return true; 
+	                	System.out.println(Thread.currentThread().getName() +" : dir :"+file.toString());
+	                	//consumer.consume(new CollectJob(file, files));
+	                	
+	                		  Stack<File> stack = new Stack<File>();
+	                		  stack.push(file);
+	                		  while(!stack.isEmpty()) {
+	                		    File child = stack.pop();
+	                		    if (child.isDirectory()) {
+	                		      for(File f : child.listFiles()) stack.push(f);
+	                		    } else if (child.isFile() && acceptFile(child)) {
+	                		      System.out.println(Thread.currentThread().getName() + " :"+ child.getPath());
+	                		      addFile(child, files);
+	                		    }
+	                		  }
+	                	
+	                }
+	            }
+			}
+			
+		}
+    	
+    }
+    private void collectFiles(File directory, Collection files) {
+    	
         if (directory.isFile()) {
 
             addFile(directory, files);
-
+            
         } else {
-
+        	// should be dir, use a thread to deal with it
+        	
             String[] directoryFiles = directory.list();
-
+            
             for (int i = 0; i < directoryFiles.length; i++) {
 
                 File file = new File(directory, directoryFiles[i]);
                 if (acceptFile(file)) {
                     addFile(file, files);
                 } else if (file.isDirectory()) {
-                    collectFiles(file, files);
+                    //return true; 
+                	consumer.consume(new CollectJob(file, files));
+                	//collectFiles(file, files);
                 }
             }
         }
+        
+        consumer.finishConsumption();
+		
     }
-
-    private void addFile(File f, Collection files) {
+    // sharing files Collection
+    private  synchronized void addFile(File f, Collection files) {
         if (!files.contains(f)) {
             files.add(f);
         }

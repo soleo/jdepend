@@ -522,15 +522,15 @@ public class JDepend {
     }
 
     public static void main(String args[]) {
-        //new JDepend().instanceMain(args);
-        new JDepend(2).instanceMain_T(args);
-        try {
+        new JDepend().instanceMain(args);
+        //new JDepend(2).instanceMain_T(args);
+      /*  try {
 			if (!compareFiles("out-par.txt", "out-seq.txt"))
 				System.out.println("NOT EQUAL");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
     }
     
     public JDepend(int x) {
