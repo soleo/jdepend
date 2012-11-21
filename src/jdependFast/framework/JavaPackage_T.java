@@ -262,7 +262,8 @@ public class JavaPackage_T {
         return d * volatility;
     }
 
-    public boolean equals(Object other) {
+    @Override
+	public boolean equals(Object other) {
         if (other instanceof JavaPackage_T) {
             JavaPackage_T otherPackage = (JavaPackage_T) other;
             return otherPackage.getName().equals(getName());
@@ -270,11 +271,13 @@ public class JavaPackage_T {
         return false;
     }
 
-    public int hashCode() {
+    @Override
+	public int hashCode() {
         return getName().hashCode();
     }
     
-    public String toString() {
+    @Override
+	public String toString() {
     	return name;
     }
 }

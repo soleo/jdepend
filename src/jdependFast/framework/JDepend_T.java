@@ -2,6 +2,7 @@ package jdependFast.framework;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -107,15 +108,15 @@ public class JDepend_T {
 
     private HashMap packages;
     private FileManager_T fileManager;
-    private PackageFilter_T filter;
+    public static PackageFilter_T filter;
     private ClassFileParser_T parser;
     private JavaClassBuilder_T builder;
     private Collection components;
     private static ExecutorService executor = null;
-
     public static ExecutorService getExecutor() {
 		return executor;
 	}
+    public static int size = 0;
 
 	public JDepend_T() {
         this(new PackageFilter_T());
@@ -123,7 +124,7 @@ public class JDepend_T {
 
     public JDepend_T(PackageFilter_T filter) {
     	
-    	executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors()*2);
+    	executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
     	setFilter(filter);
 
         this.packages = new HashMap();
@@ -145,14 +146,24 @@ public class JDepend_T {
      */
     public Collection analyze() {
     	
-        Collection<Collection<JavaClass_T>> classes = builder.build();
-        
-        ExecutorService es = JDepend_T.getExecutor();
+        Collection classes = null;
+		try {
+			classes = builder.build();
+			JDepend_T.size = classes.size();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			System.exit(1);
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			System.exit(1);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         for (Iterator i = classes.iterator(); i.hasNext();) {
-        	
-            //es.execute((JavaClass_T)i.next());
+
         	analyzeClass((JavaClass_T)i.next());
-        	
         }
 
         return getPackages();
@@ -247,8 +258,11 @@ public class JDepend_T {
      * Returns the number of registered Java classes to be analyzed.
      * 
      * @return Number of classes.
+     * @throws ExecutionException 
+     * @throws InterruptedException 
+     * @throws IOException 
      */
-    public int countClasses() {
+    public int countClasses() throws InterruptedException, ExecutionException, IOException {
         return builder.countClasses();
     }
 
@@ -358,7 +372,7 @@ public class JDepend_T {
         if (parser != null) {
             parser.setFilter(filter);
         }
-        this.filter = filter;
+        JDepend_T.filter = filter;
     }
 
 }

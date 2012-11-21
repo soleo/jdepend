@@ -66,7 +66,7 @@ public class PropertyConfigurator_T {
                 String path = properties.getProperty(key);
                 StringTokenizer st = new StringTokenizer(path, ",");
                 while (st.hasMoreTokens()) {
-                    String name = (String) st.nextToken();
+                    String name = st.nextToken();
                     name = name.trim();
                     packages.add(name);
                 }

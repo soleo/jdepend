@@ -35,7 +35,8 @@ public class PackageComparator_T implements Comparator {
         return byWhat;
     }
 
-    public int compare(Object p1, Object p2) {
+    @Override
+	public int compare(Object p1, Object p2) {
 
         JavaPackage_T a = (JavaPackage_T) p1;
         JavaPackage_T b = (JavaPackage_T) p2;

@@ -95,7 +95,8 @@ public class ClassFileParser_T extends AbstractParser_T {
         }
     }
 
-    public JavaClass_T parse(InputStream is) throws IOException {
+    
+	public JavaClass_T parse(InputStream is) throws IOException {
 
         reset();
 
@@ -586,7 +587,8 @@ public class ClassFileParser_T extends AbstractParser_T {
             return _value;
         }
 
-        public String toString() {
+        @Override
+		public String toString() {
 
             StringBuffer s = new StringBuffer("");
 
@@ -637,7 +639,8 @@ public class ClassFileParser_T extends AbstractParser_T {
             return _descriptorIndex;
         }
 
-        public String toString() {
+        @Override
+		public String toString() {
             StringBuffer s = new StringBuffer("");
 
             try {
@@ -689,7 +692,8 @@ public class ClassFileParser_T extends AbstractParser_T {
      * 
      * @return String representation.
      */
-    public String toString() {
+    @Override
+	public String toString() {
 
         StringBuffer s = new StringBuffer();
 
@@ -745,7 +749,7 @@ public class ClassFileParser_T extends AbstractParser_T {
     public static void main(String args[]) {
         try {
 
-            ClassFileParser_T.DEBUG = true;
+            AbstractParser_T.DEBUG = true;
 
             if (args.length <= 0) {
                 System.err.println("usage: ClassFileParser <class-file>");

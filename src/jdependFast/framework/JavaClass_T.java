@@ -10,7 +10,8 @@ import java.util.*;
  * @author Clarkware Consulting, Inc.
  */
 
-public class JavaClass_T implements Runnable {
+public class JavaClass_T// implements Runnable 
+{
 	
 	private JDepend_T jdt;
 	
@@ -71,7 +72,8 @@ public class JavaClass_T implements Runnable {
         this.isAbstract = isAbstract;
     }
 
-    public boolean equals(Object other) {
+    @Override
+	public boolean equals(Object other) {
 
         if (other instanceof JavaClass_T) {
             JavaClass_T otherClass = (JavaClass_T) other;
@@ -81,20 +83,22 @@ public class JavaClass_T implements Runnable {
         return false;
     }
 
-    public int hashCode() {
+    @Override
+	public int hashCode() {
         return getName().hashCode();
     }
 
     public static class ClassComparator implements Comparator {
 
-        public int compare(Object a, Object b) {
+        @Override
+		public int compare(Object a, Object b) {
             JavaClass_T c1 = (JavaClass_T) a;
             JavaClass_T c2 = (JavaClass_T) b;
 
             return c1.getName().compareTo(c2.getName());
         }
     }
-
+/*
 	public void run() {
 		
         if (!jdt.getFilter().accept(packageName)) {
@@ -111,7 +115,7 @@ public class JavaClass_T implements Runnable {
             clazzPackage.dependsUpon(importedPackage);
         }
 	}
-
+*/
 	public void setJdt(JDepend_T jdt) {
 		this.jdt = jdt;
 	}

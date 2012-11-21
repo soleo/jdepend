@@ -66,7 +66,6 @@ public class JavaClassBuilder {
                 System.err.println("\n" + ioe.getMessage());
             }
         }
-        System.out.println(classes);
         return classes;
     }
 
